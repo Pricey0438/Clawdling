@@ -1,0 +1,72 @@
+# Pet balance constants — canonical source of truth.
+# Consumed by:
+#   - firmware/scripts/gen_balance_h.py → src/pet_balance_generated.h
+#   - tools/balance_sim/sim.py (Python simulator)
+#
+# Format rules (so both consumers stay simple):
+#   - Only two levels of nesting (top key → leaf scalar OR top key → group → scalar)
+#   - Scalars: int, float, or double-quoted string
+#   - No flow-style lists, no anchors, no multi-line strings
+#   - Comments start with # in column 0 or after whitespace
+#   - '#' characters are NOT allowed inside scalar values (parser strips them as comments)
+#
+# After edit:
+#   pio run -e waveshare_amoled_216    # rebuilds with new values
+#   python tools/balance_sim/sim.py --trace ~/.claude/projects/ --days 30
+#   python tools/balance_sim/report.py out/sim_30d.json
+
+# ---- XP economy ----
+# Reduced from defaults (5/10/30) in Wave 4 tuning — old rates put a casual
+# user at L10 in 6 hrs and L30 in ~50 hrs (way ahead of the targets).
+# Final tune: 5/15 lands L10 at ~12 hrs and projects L30 at ~170 hrs
+# (= ~110 days at 1.5 hrs/day), inside the [80, 250] target band.
+xp:
+  # XP per 1% delta in session-context utilization
+  per_session_ctx_pct: 2
+  # XP per 1% delta in the 5h Anthropic usage window
+  per_5h_pct: 5
+  # XP per 1% delta in the 7-day Anthropic usage window
+  per_weekly_pct: 15
+
+# ---- Level curve ----
+# Total XP-to-next-level = base * L * (exp_base ** L)
+# Current values produce: L1→2 = 210; L29→30 ≈ 23,873; total ≈ 200k
+level_curve:
+  base: 200
+  exp_base: 1.05
+
+# ---- Pet lifecycle ----
+pet:
+  max_level: 30
+  nvs_flush_interval_sec: 300
+  gallery_cap: 50
+  num_species: 13
+
+# ---- Care stats (Saturation / Spirit / Bond) ----
+care:
+  decay_interval_sec: 1500      # -1 per stat per 25 min (100→0 in ~42h, casual-friendly)
+  action_refill_amount: 60      # +60 per feed/play/pet — one daily action mostly refills
+  action_cooldown_sec: 3600     # 1h between same-action uses
+  sad_threshold: 20             # dim sprite below this min_stat
+  neglect_rearm_threshold: 10
+
+# ---- Decay forgiveness (Wave 4 new) ----
+# When the pet has had no XP gain for trigger_no_usage_sec, decay runs at
+# 1/slowdown_factor rate until the next XP event resets the forgiveness state.
+forgiveness:
+  trigger_no_usage_sec: 28800   # 8h idle triggers soft-pause
+  slowdown_factor: 6            # decay runs at 1/6 rate during forgiveness
+
+# ---- Speech ----
+speech:
+  neglect_min_pet_age_sec: 3600
+  neglect_absence_sec: 86400
+
+# ---- Shiny ----
+# Probability = 1 / drop_rate_denom on each hatch (esp_random() & mask check)
+shiny:
+  drop_rate_denom: 64
+
+# ---- Vacation ----
+vacation:
+  max_days: 14

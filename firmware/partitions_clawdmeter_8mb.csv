@@ -1,0 +1,16 @@
+# Clawdmeter 8MB partition table — 64KB NVS (vs default 20KB).
+# NVS bump enables pet/ach/strk/recap writes to keep working under churn
+# (was failing with NOT_ENOUGH_SPACE on heavy test cycles, fixed runtime via
+# sim nvs-erase; this CSV makes the larger budget the build-time default).
+#
+# Layout shifts app0 from 0x10000 → 0x20000 to make room. App slots stay
+# at 3264K each — spiffs absorbs the 128K reduction. coredump doubled from
+# 64K → 128K (cheap; no other cost).
+#
+# Name,     Type, SubType, Offset,   Size,     Flags
+nvs,        data, nvs,     0x9000,   0x10000,
+otadata,    data, ota,     0x19000,  0x2000,
+app0,       app,  ota_0,   0x20000,  0x330000,
+app1,       app,  ota_1,   0x350000, 0x330000,
+spiffs,     data, spiffs,  0x680000, 0x160000,
+coredump,   data, coredump,0x7E0000, 0x20000,

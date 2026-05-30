@@ -1,0 +1,3 @@
+{"type":"ai-title","title":"Add session screen","sessionId":"bbbb1111-2222-3333-4444-555555555555"}
+{"type":"user","message":{"role":"user","content":"hi"},"sessionId":"bbbb1111-2222-3333-4444-555555555555","timestamp":"2026-05-22T11:00:00.000Z"}
+{"type":"assistant","message":{"role":"assistant","content":[],"stop_reason":"end_turn","usage":{"input_tokens":8,"cache_creation_input_tokens":2000,"cache_read_input_tokens":40000,"output_tokens":120},"model":"claude-sonnet-4-6"},"sessionId":"bbbb1111-2222-3333-4444-555555555555","cwd":"/home/dev/projects/Clawdmeter","timestamp":"2026-05-22T11:00:30.000Z"}

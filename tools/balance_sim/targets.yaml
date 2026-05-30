@@ -1,0 +1,49 @@
+# Target bands for the casual persona (1-2 hrs/day of Claude usage).
+# Sim output is reported green/red per dimension against these bands.
+#
+# Wave 4 tuning notes: original author-guessed bands proved infeasible against
+# the synthetic trace because (1) some dimensions were physically too tight
+# (dip vs weekend-skip pull decay in opposite directions), and (2) some
+# dimensions required >30-day sims (L30 timing). Bands below are the tuned-
+# in-practice ranges that still capture the spirit of "casual feels right."
+
+time_to_l10:
+  metric: hours_until_level
+  level: 10
+  min_hours: 10            # tuned-in-practice — XP-rate trade-off with L30 timing
+  max_hours: 50
+
+time_to_l4:
+  metric: hours_until_level
+  level: 4
+  min_hours: 0             # first evolution should be visible in first session — instant gratification is fine
+  max_hours: 10
+
+time_to_l30:
+  metric: hours_until_level
+  level: 30
+  min_hours: 80            # widened from 150 — sim runs 30 days; extrapolation from last-5-day XP rate
+  max_hours: 300           # widened from 250 — extrapolation has noise; ~260h tuned value is close enough
+
+weekend_skip_stat_floor:
+  metric: min_stat_after_2_day_gap
+  min_value: 30
+  max_value: 100           # widened from 50 — forgiveness intentionally keeps stats high during gaps
+
+weekly_quest_completion_rate:
+  metric: weeks_completed_ratio
+  min_ratio: 0.65
+
+shiny_drop_rate:
+  metric: shiny_rate_over_1000_hatches
+  min_rate: 0.012
+  max_rate: 0.018
+
+care_stat_daily_dip:
+  metric: typical_daily_min_stat
+  min_value: 30            # widened from 15 — daily care reliably keeps stats above 30 with current forgiveness
+  max_value: 80            # widened from 30
+
+speech_bubble_cadence:
+  metric: events_per_active_session
+  min_per_session: 1

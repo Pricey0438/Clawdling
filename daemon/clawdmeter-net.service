@@ -1,0 +1,15 @@
+[Unit]
+Description=Clawdmeter Network Daemon (HTTPS via Tailscale Funnel)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment=PORT=8443
+EnvironmentFile=%h/.config/clawdmeter/env
+ExecStart=DAEMON_PATH
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

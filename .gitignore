@@ -1,0 +1,24 @@
+# PlatformIO build artifacts
+firmware/.pio/
+firmware/.vscode/
+
+# Screenshot / QA captures (may contain personal info: SSID, IP, hostnames)
+out/
+
+# OS
+.DS_Store
+
+# Claude Code
+.claude/
+.superpowers/
+
+# Node tooling deps (npm install --no-save)
+tools/node_modules/
+tools/package-lock.json
+
+# Mac daemon venv
+daemon/.venv/
+
+# Python bytecode cache
+__pycache__/
+*.pyc

@@ -1,0 +1,11 @@
+# Clawdmeter 16MB partition table — 64KB NVS (vs default 20KB).
+# Same NVS bump as the 8MB variant; this one keeps the 16MB app/spiffs scale.
+# App slots stay at 6400K each. spiffs absorbs the 64K shift.
+#
+# Name,     Type, SubType, Offset,   Size,     Flags
+nvs,        data, nvs,     0x9000,   0x10000,
+otadata,    data, ota,     0x19000,  0x2000,
+app0,       app,  ota_0,   0x20000,  0x640000,
+app1,       app,  ota_1,   0x660000, 0x640000,
+spiffs,     data, spiffs,  0xCA0000, 0x350000,
+coredump,   data, coredump,0xFF0000, 0x10000,

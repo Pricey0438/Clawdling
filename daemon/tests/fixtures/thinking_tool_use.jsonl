@@ -1,0 +1,1 @@
+{"type":"assistant","message":{"role":"assistant","content":[],"stop_reason":"tool_use","usage":{"input_tokens":10,"cache_creation_input_tokens":1000,"cache_read_input_tokens":80000,"output_tokens":50},"model":"claude-opus-4-7"},"sessionId":"cccc1111-2222-3333-4444-555555555555","cwd":"/home/dev/projects/Foo","timestamp":"2026-05-22T12:00:00.000Z"}
