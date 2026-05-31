@@ -881,7 +881,7 @@ static void petinfo_ensure_widgets(void) {
     petinfo_val_total   = petinfo_make_tile(margin,                y, col_w, row_h, "TOTAL XP");
     petinfo_val_tonext  = petinfo_make_tile(margin + col_w + gap,  y, col_w, row_h, "TO NEXT");
     y += row_h + gap;
-    petinfo_val_evolve  = petinfo_make_tile(margin,                y, w,     row_h, "NEXT EVOLVE");
+    petinfo_val_evolve  = petinfo_make_tile(margin,                y, w,     row_h, "EVOLVES AT");
 }
 
 static void petinfo_refresh_values(void) {
