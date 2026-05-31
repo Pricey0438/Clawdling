@@ -3,6 +3,7 @@
 #include "theme.h"
 #include "ui.h"
 #include "ui_panels.h"
+#include "pet.h"            // current pet's shiny flag tints the detail animation
 #include "hal/board_caps.h"
 #include <Arduino.h>
 #include <esp_heap_caps.h>
@@ -215,8 +216,10 @@ static void detail_build_once() {
 static void detail_render_frame() {
     if (!detail_canvas_buf) return;
     int canvas_w = 20 * detail_cell;
+    const Pet* p = pet_current();
+    bool shiny = (p && p->is_shiny);
     splash_render_to_buf(detail_canvas_buf, canvas_w, detail_cell,
-                         det_anim_idx, det_frame_idx);
+                         det_anim_idx, det_frame_idx, shiny);
     lv_obj_invalidate(detail_canvas);
 }
 

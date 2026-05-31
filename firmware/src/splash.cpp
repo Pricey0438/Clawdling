@@ -4,6 +4,7 @@
 #include "ui.h"
 #include "usage_rate.h"
 #include "settings.h"
+#include "pet.h"            // current pet's shiny flag tints the splash
 #include "hal/board_caps.h"
 #include <Arduino.h>
 #include <string.h>
@@ -75,12 +76,26 @@ static uint16_t *row_buf = NULL;   // scratch row, sized to canvas_w
 
 static void render_frame(const uint8_t *cells, const uint16_t *palette) {
     if (!row_buf || !canvas_buf) return;
+
+    // Tint the splash creature shiny when the current pet is shiny. Build a
+    // transformed local palette once (10 entries) rather than per pixel; the
+    // transparent/background colour (true black) is left as-is so it doesn't
+    // become a visible box.
+    const Pet* p = pet_current();
+    bool shiny = (p && p->is_shiny);
+    uint16_t local_palette[SPLASH_PALETTE_SIZE];
+    for (int i = 0; i < SPLASH_PALETTE_SIZE; i++) {
+        uint16_t c = palette ? palette[i] : (uint16_t)COL_EMPTY;
+        if (shiny && c != COL_EMPTY) c ^= 0x8410u;
+        local_palette[i] = c;
+    }
+
     for (int gy = 0; gy < GRID; gy++) {
         for (int gx = 0; gx < GRID; gx++) {
             uint8_t code = cells[gy * GRID + gx];
-            uint16_t color = (palette && code < SPLASH_PALETTE_SIZE) ? palette[code] : COL_EMPTY;
-            uint16_t *p = &row_buf[gx * cell];
-            for (int i = 0; i < cell; i++) p[i] = color;
+            uint16_t color = (palette && code < SPLASH_PALETTE_SIZE) ? local_palette[code] : COL_EMPTY;
+            uint16_t *p2 = &row_buf[gx * cell];
+            for (int i = 0; i < cell; i++) p2[i] = color;
         }
         for (int dy = 0; dy < cell; dy++) {
             memcpy(&canvas_buf[(gy * cell + dy) * canvas_w], row_buf, canvas_w * 2);
@@ -258,13 +273,18 @@ bool splash_render_to_buf(uint16_t* dest, int dest_w,
     uint16_t local_palette[SPLASH_PALETTE_SIZE];
     for (int i = 0; i < SPLASH_PALETTE_SIZE; i++) {
         uint16_t c = base_palette ? base_palette[i] : (uint16_t)COL_EMPTY;
-        if (shiny) c ^= 0x8410u;
-        if (dim) {
-            uint8_t r = (c >> 11) & 0x1F;
-            uint8_t g = (c >> 5)  & 0x3F;
-            uint8_t b = c         & 0x1F;
-            r >>= 1; g >>= 1; b >>= 1;
-            c = (uint16_t)((r << 11) | (g << 5) | b);
+        // Leave the transparent/background colour untouched — applying the
+        // shiny XOR (or dim) to true black turns the empty cells into a visible
+        // grey box behind the creature.
+        if (c != COL_EMPTY) {
+            if (shiny) c ^= 0x8410u;
+            if (dim) {
+                uint8_t r = (c >> 11) & 0x1F;
+                uint8_t g = (c >> 5)  & 0x3F;
+                uint8_t b = c         & 0x1F;
+                r >>= 1; g >>= 1; b >>= 1;
+                c = (uint16_t)((r << 11) | (g << 5) | b);
+            }
         }
         local_palette[i] = c;
     }
